@@ -11,11 +11,11 @@ from django.shortcuts import render
 from .src.RtcTokenBuilder import RtcTokenBuilder, Role_Attendee
 from .models import AgoraTokenLog
 
-def generate_agora_token(id, channelName):
+def generate_agora_token(username, channelName):
     appID = 'AGORA_APP_ID'
     appCertificate = 'AGORA_APP_CERTIFICATE'
     channelName = channelName
-    userAccount = id
+    userAccount = username
     expireTimeInSeconds = 3600
     currentTimestamp = int(time.time())
     privilegeExpiredTs = currentTimestamp + expireTimeInSeconds
@@ -23,7 +23,7 @@ def generate_agora_token(id, channelName):
     token = RtcTokenBuilder.buildTokenWithAccount(
         appID, appCertificate, channelName, userAccount, Role_Attendee, privilegeExpiredTs)
 
-    log = AgoraTokenLog(id = id, token = token, appID = appID)
+    log = AgoraTokenLog(token = token, appID = appID, creator = username)
     log.save()
     print(token)
     print('done token')
