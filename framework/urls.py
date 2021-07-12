@@ -18,6 +18,11 @@ from django.urls import path
 from graphene_django.views import GraphQLView as BaseGraphQLView
 from django.contrib.auth import views as auth_views
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+
+
+def test(request):
+    return HttpResponse("Git is working")
 
 class GraphQLView(BaseGraphQLView):
 
@@ -36,6 +41,7 @@ class GraphQLView(BaseGraphQLView):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    path('git_test/', test, name='git_test')
 ]
 admin.site.site_header = 'i69'
 admin.site.site_url = ''
