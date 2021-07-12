@@ -171,4 +171,6 @@ class Query(graphene.ObjectType):
         return zodiacSign.objects.values().all()
 
     def resolve_defaultPicker(self, info):
-        return age.objects.all()
+        a = age.objects.all()
+        e = ethnicity.objects.all()
+        return (a, e)

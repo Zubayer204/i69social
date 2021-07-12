@@ -19,12 +19,12 @@ class generateAgoraToken(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
-    generateAgoraToken = graphene.Field(generateAgoraToken, username=graphene.String(required=True), ChannelName=graphene.String(required=True))
+    generateAgoraToken = graphene.Field(generateAgoraToken, id=graphene.String(required=True), ChannelName=graphene.String(required=True))
 
     def resolve_generateAgoraToken(self, info, **kwargs):
-        username = kwargs.get('username')
+        id = kwargs.get('id')
         ChannelName = kwargs.get('ChannelName')
-        token , appID = generate_agora_token(username, ChannelName)
+        token , appID = generate_agora_token(id, ChannelName)
 
         tokenlog = AgoraTokenLog.objects.values().first()
         return tokenlog
