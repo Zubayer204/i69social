@@ -43,3 +43,4 @@ COMPLETED:
 10. Search Function is broken
 11. Fix Deduct Coins Api - Method Name (it will be two methods for now) "MESSAGE", "IMAGE_MESSAGE"
 2. in all apis the developer is asking for username as param. But make it userId (uid) as username is not unique.
+
