@@ -34,3 +34,7 @@ class reportUser(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     social_auth = graphql_social_auth.SocialAuth.Field()
     reportUser = reportUser.Field()
+
+
+# class googleAuth(graphene.ObjectType):
+    

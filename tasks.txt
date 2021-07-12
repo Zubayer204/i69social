@@ -1,17 +1,3 @@
-1. Getting this error many times in some apis like Delete Profile:
-{
-"errors": [
-{
-"message": "set_wakeup_fd only works in main thread of the main interpreter"
-}
-],
-"data": {
-"deleteProfile": null
-}
-}
-
-
-
 3. Fix First Google Auth Api for Android
 4. Add Purchase Coins Api (Where we will input Purchase Method, User Id, Coins, Money)
 5. Create PayPal Api so that PayPal payment method works
@@ -29,6 +15,7 @@ Make it like this for all things of Default Pickers: Example:
 "value": "pet friendly"
 "value_FR": "pet friendly translation here"
 },
+13. Add location based coin prices
 
 
 
@@ -43,4 +30,4 @@ COMPLETED:
 10. Search Function is broken
 11. Fix Deduct Coins Api - Method Name (it will be two methods for now) "MESSAGE", "IMAGE_MESSAGE"
 2. in all apis the developer is asking for username as param. But make it userId (uid) as username is not unique.
-
+12. Add a functionality to change settings from admin panel

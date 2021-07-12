@@ -5,6 +5,7 @@ from framework import settings
 import graphene
 from django.contrib.auth import get_user_model
 import user.schema
+import purchase.schema
 import graphql_jwt
 from .api.API_Exception import APIException
 import graphene
@@ -118,6 +119,7 @@ class DeleteProfile(graphene.Mutation):
 class Mutation(
     user.schema.Mutation,
     reports.schema.Mutation,
+    purchase.schema.Mutation,
     graphene.ObjectType):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()

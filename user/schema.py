@@ -66,13 +66,12 @@ class updateCoin(graphene.Mutation):
 
     class Arguments:
         coins = graphene.Int()
+        id = graphene.String()
 
     Output = coinsResponseObj
 
-    def mutate(self, info, coins=None):
-        user = info.context.user
-        if user.is_anonymous:
-            return APIException("You must be logged in to update coins")
+    def mutate(self, info, coins=None, id=None):
+        user = User.objects.get(id=id)
         coin = user.coins
         print(coin)
 
@@ -84,12 +83,13 @@ class updateCoin(graphene.Mutation):
 
 class ChatCoin(graphene.Mutation):
     class Arguments:
+        id = graphene.String()
         method = graphene.String()
 
     Output = coinsResponseObj
 
-    def mutate(self, info, method=None):
-        user = info.context.user
+    def mutate(self, info, method=None, id=None):
+        user = User.objects.get(id=id)
         if user.is_anonymous:
             return APIException("You must be logged in to use coins")
         coin = user.coins
@@ -122,9 +122,11 @@ class ChatCoin(graphene.Mutation):
 class UpdateProfilePic(graphene.Mutation):
     Output = UploadFileObj
 
-    @login_required
-    def mutate(self, info):
-        user = info.context.user
+    class Arguments:
+        id = graphene.String()
+
+    def mutate(self, info,  id=None):
+        user = User.objects.get(id=id)
         avatar = info.context.FILES['imageFile']
         profile = User.objects.get(user=user)
         profile.avatar = avatar
@@ -145,7 +147,6 @@ class blockUser(graphene.Mutation):
         user.blockedUsers.add(blckd_user)
         user.save()
         return blockResponseObj(id=blckd_user.id, username=blckd_user.username, success=True)
-
 
 
 class searchObj(DjangoObjectType):
@@ -250,4 +251,3 @@ class Mutation(graphene.ObjectType):
     UpdateProfilePic = UpdateProfilePic.Field()
     blockUser = blockUser.Field()
     deductCoin = ChatCoin.Field()
-
