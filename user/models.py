@@ -24,16 +24,6 @@ class Tags(models.Model):
     def __str__(self):
         return self.name
 
-class Interests(models.Model):
-    name = models.CharField(max_length=200)
-
-    class Meta:
-        verbose_name_plural = "Interests"
-        verbose_name = "Interest"
-
-    def __str__(self):
-        return self.name
-
 
 class User(AbstractUser):
     def get_avatar_path(self, filename):
@@ -42,9 +32,25 @@ class User(AbstractUser):
         return 'static/uploads/images/avatar/' + filename
 
     INTEREST_CHOICES = (
-        (0, 'Male'),
-        (1, 'Female'),
-        (2, 'Both')
+        (1, "SERIOUS_RELATIONSHIP_ONLY_MALE"),
+        (2, "SERIOUS_RELATIONSHIP_ONLY_FEMALE"),
+        (3, "SERIOUS_RELATIONSHIP_BOTH"),
+
+        (4, "CAUSAL_DATING_ONLY_MALE"),
+        (5, "CAUSAL_DATING_ONLY_FEMALE"),
+        (6, "CAUSAL_DATING_BOTH"),
+
+        (7, "NEW_FRIENDS_ONLY_MALE"),
+        (8, "NEW_FRIENDS_ONLY_FEMALE"),
+        (9, "NEW_FRIENDS_BOTH"),
+
+        (10, "ROOM_MATES_ONLY_MALE"),
+        (11, "ROOM_MATES_ONLY_FEMALE"),
+        (12, "ROOM_MATES_BOTH"),
+
+        (13, "BUSINESS_CONTACTS_ONLY_MALE"),
+        (14, "BUSINESS_CONTACTS_ONLY_FEMALE"),
+        (15, "BUSINESS_CONTACTS_BOTH")
     )
     GENDER_CHOICES = (
         (0, 'Male'),
@@ -69,7 +75,8 @@ class User(AbstractUser):
     coins = models.PositiveIntegerField(null=False,default=0)
     zodiacSign = models.CharField(max_length=200, null=True, blank=True)
     height = models.IntegerField(null=False,default=0)
-    interestedIn = models.ManyToManyField(Interests, blank=True,related_name='interest')
+    # interestedIn = models.ManyToManyField(Interests, blank=True,related_name='interest')
+    interestedIn = models.PositiveSmallIntegerField(choices=INTEREST_CHOICES, null=True, blank=True)
     ethinicity = models.PositiveBigIntegerField(choices=ETHINICITY_TYPE, blank=True, null=True)
     religion = models.PositiveBigIntegerField(choices=RELIGIOUS_CHOICE, blank=True, null=True)
     blockedUsers =  models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)

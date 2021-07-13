@@ -24,11 +24,6 @@ class TagsAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
     pass
 
 
-@admin.register(Interests)
-class InterestsAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
-    pass
-
-
 @admin.register(CoinSettings)
 class CoinSettingsAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
     pass

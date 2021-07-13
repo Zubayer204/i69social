@@ -1,7 +1,6 @@
 from framework.api.API_Exception import APIException
 import graphene
 from user.models import *
-from django.db.models import F
 #from framework.api.API_Exception import APIException
 from graphql_jwt.decorators import login_required
 from gallery.models import Album
@@ -19,12 +18,12 @@ class Gender(graphene.ObjectType):
     
     def resolve_name(self, info):
         return get_gender_from_code(self)
+
 class photosObj(graphene.ObjectType):
     album = graphene.Field(AlbumObj)
 
     def resolve_album(self, info):
         return Album.objects.values().get(id=self['album_id'])
-
 
 class isOnlineObj(graphene.ObjectType):
     id = graphene.String()
@@ -50,7 +49,6 @@ class OnlineObj(graphene.ObjectType):
 class UploadFileObj(graphene.ObjectType):
     fileName = graphene.String()
 
-
 class coinsResponseObj(graphene.ObjectType):
     id = graphene.String()
     coins = graphene.Int()
@@ -60,7 +58,6 @@ class blockResponseObj(graphene.ObjectType):
     id = graphene.String()
     username = graphene.String()
     success = graphene.Boolean()
-
 
 class updateCoin(graphene.Mutation):
 
@@ -118,7 +115,6 @@ class ChatCoin(graphene.Mutation):
         user.save()
         return coinsResponseObj(id=user.id, success=True, coins=user.coins)
 
-
 class UpdateProfilePic(graphene.Mutation):
     Output = UploadFileObj
 
@@ -148,7 +144,6 @@ class blockUser(graphene.Mutation):
         user.save()
         return blockResponseObj(id=blckd_user.id, username=blckd_user.username, success=True)
 
-
 class searchObj(DjangoObjectType):
     class Meta:
         model = get_user_model()
@@ -175,13 +170,16 @@ class Query(graphene.ObjectType):
 
     blockedUsers = graphene.List(blockedUsers)
 
-    gender_search_users = graphene.List(searchObj, gender=graphene.Int(required=True), description = "Search users based on gender")
-
-    height_search_users = graphene.List(searchObj, min_height=graphene.String(required=True),max_height=graphene.String(required=True), description = "Search users based on height")
-
-    age_search_users = graphene.List(searchObj, min_age=graphene.String(required=True),max_age=graphene.String(required=True), description = "Search users based on age")
-
-    interest_search_users = graphene.List(searchObj, interest=graphene.String(required=True), description = "Search users based on their interest")
+    search_users = graphene.List(
+        searchObj,
+        interested_in=graphene.Int(required=True),
+        gender=graphene.Int(),
+        min_height=graphene.Int(),
+        max_height=graphene.Int(),
+        min_age=graphene.Int(),
+        max_age=graphene.Int(),
+        description="Search users based on their age, interest, height or gender"
+    )
 
 
     def resolve_usersOnline(self, info):
@@ -198,52 +196,41 @@ class Query(graphene.ObjectType):
         else:
             raise Exception('Id is a required parameter')
 
-    @login_required
     def resolve_blockedUsers(self, info):
         id = info.context.user.id
         user = User.objects.get(id=id)
         return user.blockedUsers.all().values('id', 'username')
-
-
+    
     @staticmethod
-    def resolve_gender_search_users(self, info, **kwargs):
+    def resolve_search_users(self, info, **kwargs):
+        interest= kwargs.get('interested_in')
         gender = kwargs.get('gender')
-        if gender is not None:
-            print(gender)
-            print(get_user_model().objects.filter(gender=gender))
-            return get_user_model().objects.filter(gender=gender)
-        elif gender == "Both":
-            return get_user_model().objects.values().all()
-        else:
-            raise Exception('gender is a required parameter')
-
-    @staticmethod
-    def resolve_height_search_users(self, info, **kwargs):
-        min_height = kwargs.get('min_height')
-        max_height = kwargs.get('max_height')
-        if min_height and max_height is not None:
-            return get_user_model().objects.filter(height__range=(min_height, max_height))
-        else:
-            raise Exception('No user found')
-
-    @staticmethod
-    def resolve_age_search_users(self, info, **kwargs):
-        min_age = kwargs.get('min_age')
         max_age = kwargs.get('max_age')
-        if min_age and max_age is not None:
-            # print(get_user_model().objects.filter(age__range=(min_age, max_age)))
-            return get_user_model().objects.filter(age__range=(min_age, max_age))
-        else:
-            raise Exception('NO user found')
+        min_age = kwargs.get('min_age')
+        max_height = kwargs.get('max_height')
+        min_height = kwargs.get('min_height')
 
-    def resolve_interest_search_users(self, info, **kwargs):
-        interest = kwargs.get('interest')
         if interest is not None:
-            # print(get_user_model().objects.filter(interestedIn = interest))
-            return get_user_model().objects.filter(interestedIn = interest)
+            res = get_user_model().objects.filter(interestedIn=interest)
+        
+        if gender is not None:
+            res = res.filter(gender=gender)
+        
+        if max_age is not None or min_age is not None:
+            if max_age is None:
+                max_age = 100
+            if min_age is None:
+                min_age = 0
+            res = res.filter(age__range=(min_age, max_age))
 
-
-
+        if max_height is not None or min_height is not None:
+            if max_height is None:
+                max_height = 1000
+            if min_height is None:
+                min_height = 0
+            res = res.filter(height__range=(min_height, max_height))
+        
+        return res
 
 
 class Mutation(graphene.ObjectType):
