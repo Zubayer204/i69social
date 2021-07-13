@@ -19,3 +19,8 @@ class Reported_Users(models.Model):
     
     def __str__(self):
         return str(self.reporter) + ' - ' + str(self.reportee) + ' ---- ' + str(self.timestamp)
+
+class GoogleAuth(models.Model):
+    id = models.BigAutoField(primary_key=True, null=False)
+    email = models.EmailField(null=True, blank=True)
+    sub = models.CharField(max_length=200, null=True, blank=True)
