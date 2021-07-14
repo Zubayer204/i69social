@@ -173,7 +173,6 @@ class Query(graphene.ObjectType):
     search_users = graphene.List(
         searchObj,
         interested_in=graphene.Int(required=True),
-        gender=graphene.Int(),
         min_height=graphene.Int(),
         max_height=graphene.Int(),
         min_age=graphene.Int(),
@@ -204,7 +203,6 @@ class Query(graphene.ObjectType):
     @staticmethod
     def resolve_search_users(self, info, **kwargs):
         interest= kwargs.get('interested_in')
-        gender = kwargs.get('gender')
         max_age = kwargs.get('max_age')
         min_age = kwargs.get('min_age')
         max_height = kwargs.get('max_height')
@@ -212,9 +210,6 @@ class Query(graphene.ObjectType):
 
         if interest is not None:
             res = get_user_model().objects.filter(interestedIn=interest)
-        
-        if gender is not None:
-            res = res.filter(gender=gender)
         
         if max_age is not None or min_age is not None:
             if max_age is None:
