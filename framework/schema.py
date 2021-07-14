@@ -83,7 +83,10 @@ class UpdateProfile(graphene.Mutation):
                politics=None, zodiacSign=None, interested_in=None, ethnicity=None, religion=None, education=None):
         global socialObj
         user = get_user_model().objects.get(id=id)
-        profile = UserSocialProfile.objects.get(user=user)
+        try:
+            profile = UserSocialProfile.objects.get(user=user)
+        except:
+            profile = None
         if username is not None:
             user.username = username
         if fullName is not None:
