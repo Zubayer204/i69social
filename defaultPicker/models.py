@@ -8,7 +8,6 @@ translator = Translator()
 class age(models.Model):
     id = models.BigAutoField(primary_key=True,null=False)
     age = models.IntegerField()
-    age_fr = models.IntegerField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'age'
@@ -17,9 +16,6 @@ class age(models.Model):
     def __str__(self):
         return str(self.id) + ' - ' + str(self.age)
 
-    def save(self, *args, **kwargs):
-        self.age_fr = int(self.age)
-        return super().save(*args, **kwargs)
 
 class ethnicity(models.Model):
     id = models.BigAutoField(primary_key=True,null=False)
