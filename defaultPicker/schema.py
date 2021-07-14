@@ -7,8 +7,8 @@ from django.db.models import F
 
 class ageObj(graphene.ObjectType):
     id = graphene.Int()
-    value = graphene.String()
-    value_fr = graphene.String()
+    value = graphene.Int()
+    value_fr = graphene.Int()
 
 
 class ethnicityObj(graphene.ObjectType):
