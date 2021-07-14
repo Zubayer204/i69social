@@ -1,18 +1,14 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
-from ckeditor.fields import RichTextField
 from django.contrib.auth.models import AbstractUser
-from framework.utils import SOCIAL_PROFILE_PLATFORMS
 from django.conf import settings
 from defaultPicker.models import tags as Tags
 
 from framework.validators import validate_file_size, processed_image_field_specs
-from gallery.models import Album
 from imagekit.models import ProcessedImageField
 import uuid
 from .utils import FAMILY_CHOICE, AGE_RANGE, ETHINICITY_TYPE, POLITICS_CHOICE, RELIGIOUS_CHOICE
-from django.contrib.auth import get_user_model
 
 
 class User(AbstractUser):
@@ -89,6 +85,15 @@ class User(AbstractUser):
     )
 
 class UserSocialProfile(models.Model):
+
+    SOCIAL_PROFILE_PLATFORMS = (
+        (1, 'GOOGLE'),
+        (2, 'FACEBOOK'),
+        (3, 'INSTAGRAM'),
+        (4, 'SNAPCHAT'),
+        (5, 'LINKEDIN'),
+        (6, 'REDDIT')
+    )
 
 
     id = models.BigAutoField(primary_key=True)

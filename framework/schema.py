@@ -74,7 +74,7 @@ class UpdateProfile(graphene.Mutation):
         avatar = graphene.String()
 
         url = graphene.String()
-        platform = graphene.String()
+        platform = graphene.Int(description="Number of social platform 1.GOOGLE 2.FACEBOOK 3.INSTAGRAM 4.SNAPCHAT 5.LINKEDIN")
 
     Output = userResponseObj
 
