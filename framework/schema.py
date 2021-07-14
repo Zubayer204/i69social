@@ -11,7 +11,7 @@ from .api.API_Exception import APIException
 import graphene
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
-from user.models import User
+from user.models import User, UserSocialProfile
 from defaultPicker.models import tags
 import reports.schema
 #import purchase.schema
@@ -73,13 +73,17 @@ class UpdateProfile(graphene.Mutation):
         book = graphene.JSONString()
         avatar = graphene.String()
 
+        url = graphene.String()
+        platform = graphene.String()
+
     Output = userResponseObj
 
     def mutate(self, info, id, username=None, fullName=None, gender=None, email=None,height=None,familyPlans=None,
-               about=None,location=None,age = None, avatar=None, isOnline=None, tag_ids=None,
+               about=None,location=None,age = None, avatar=None, isOnline=None, tag_ids=None, url=None, platform=None,
                politics=None, zodiacSign=None, interested_in=None, ethnicity=None, religion=None, education=None):
         global socialObj
         user = get_user_model().objects.get(id=id)
+        profile = UserSocialProfile.objects.get(user=user)
         if username is not None:
             user.username = username
         if fullName is not None:
@@ -119,6 +123,18 @@ class UpdateProfile(graphene.Mutation):
             user.religion = religion
         if education is not None:
             user.education = education
+
+        if url is not None or platform is not None:
+            if profile is None:
+                new_profile = UserSocialProfile.objects.create(url=url, platform=platform, user=user)
+                new_profile.save()
+            else:
+                if url is not None:
+                    profile.url = url
+                    profile.save()
+                if platform is not None:
+                    profile.platform = platform
+                    profile.save()
 
         
         user.save()
