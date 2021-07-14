@@ -18,8 +18,7 @@ class age(models.Model):
         return str(self.id) + ' - ' + str(self.age)
 
     def save(self, *args, **kwargs):
-        if not self.age_fr:
-            self.age_fr = self.age
+        self.age_fr = self.age
         return super().save(*args, **kwargs)
 
 class ethnicity(models.Model):
