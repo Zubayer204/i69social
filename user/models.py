@@ -5,6 +5,7 @@ from ckeditor.fields import RichTextField
 from django.contrib.auth.models import AbstractUser
 from framework.utils import SOCIAL_PROFILE_PLATFORMS
 from django.conf import settings
+from defaultPicker.models import tags as Tags
 
 from framework.validators import validate_file_size, processed_image_field_specs
 from gallery.models import Album
@@ -12,17 +13,6 @@ from imagekit.models import ProcessedImageField
 import uuid
 from .utils import FAMILY_CHOICE, AGE_RANGE, ETHINICITY_TYPE, POLITICS_CHOICE, RELIGIOUS_CHOICE
 from django.contrib.auth import get_user_model
-
-
-class Tags(models.Model):
-    name = models.CharField(max_length=200)
-
-    class Meta:
-        verbose_name_plural = "Tags"
-        verbose_name = "Tag"
-
-    def __str__(self):
-        return self.name
 
 
 class User(AbstractUser):

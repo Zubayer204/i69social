@@ -19,10 +19,6 @@ class UserAdmin(ImportExportModelAdmin, ExportActionMixin,admin.ModelAdmin):
 class UserSocialProfileAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
     pass
 
-@admin.register(Tags)
-class TagsAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
-    pass
-
 
 @admin.register(CoinSettings)
 class CoinSettingsAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):

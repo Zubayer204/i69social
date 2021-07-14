@@ -12,6 +12,7 @@ import graphene
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
 from user.models import User
+from defaultPicker.models import tags
 import reports.schema
 #import purchase.schema
 import defaultPicker.schema
@@ -45,16 +46,25 @@ class CreateUser(graphene.Mutation):
 class UpdateProfile(graphene.Mutation):
 
     class Arguments:
+        id = graphene.String()
         username = graphene.String()
-        name = graphene.String()
+        fullName = graphene.String()
         email = graphene.String()
-        gender = graphene.String()
+        gender = graphene.Int()
         about = graphene.String()
         location = graphene.String()
-        familyPlans = graphene.String()
-        age = graphene.String()
+        about = graphene.String()
+        isOnline = graphene.Boolean()
+        familyPlans = graphene.Int()
+        age = graphene.Int()
+        tag_ids = graphene.List(graphene.Int)
+        politics = graphene.Int()
+        zodiacSign = graphene.String()
         height = graphene.String()
+        interested_in = graphene.Int()
         ethinicity = graphene.String()
+        religion = graphene.Int()
+        education = graphene.String()
         music = graphene.JSONString()
         tvShows = graphene.JSONString()
         sportsTeams  = graphene.JSONString()
@@ -65,40 +75,53 @@ class UpdateProfile(graphene.Mutation):
 
     Output = userResponseObj
 
-    def mutate(self, info, username=None, name=None, gender=None, email=None,height=None,familyPlans=None,
-               about=None,url=None,location=None,country=None,age = None, avatar=None):
+    def mutate(self, info, id, username=None, fullName=None, gender=None, email=None,height=None,familyPlans=None,
+               about=None,location=None,age = None, avatar=None, isOnline=None, tag_ids=None,
+               politics=None, zodiacSign=None, interested_in=None, ethnicity=None, religion=None, education=None):
         global socialObj
-        user = info.context.user
-        profile = info.context.user
+        user = get_user_model().objects.get(id=id)
         if username is not None:
             user.username = username
-        if name is not None:
-            user.name = name
-            profile.name = name
+        if fullName is not None:
+            user.fullName = fullName
         if gender is not None:
             user.gender = gender
-            profile.gender = gender
         if email is not None:
             user.email = email
-            profile.email = email
         if height is not None:
-            profile.height = height
+            user.height = height
         if familyPlans is not None:
-            profile.familyPlans = familyPlans
+            user.familyPlans = familyPlans
         if about is not None:
-            profile.about = about
-        if url is not None:
-            profile.url = url
+            user.about = about
         if location is not None:
-            profile.location = location
-        if country is not None:
-            profile.country = country
+            user.location = location
         if age is not None:
-            profile.age = age
+            user.age = age
         if avatar is not None:
-            profile.avatar = avatar
+            user.avatar = avatar
+        if isOnline is not None:
+            user.isOnline = isOnline
+        if tag_ids is not None:
+            for tag_id in tag_ids:
+                tag = tags.objects.get(id=tag_id)
+                if tag is not None:
+                    user.tags.add(tag)
+        if politics is not None:
+            user.politics = politics
+        if zodiacSign is not None:
+            user.zodiacSign = zodiacSign
+        if  interested_in is not None:
+            user.interested_in = interested_in
+        if ethnicity is not None:
+            user.ethnicity = ethnicity
+        if religion is not None:
+            user.religion = religion
+        if education is not None:
+            user.education = education
+
+        
         user.save()
-        profile.save()
         return userResponseObj(id=user.id)
 
 class DeleteProfile(graphene.Mutation):
