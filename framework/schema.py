@@ -178,18 +178,18 @@ class Query(
     user.schema.Query,
     graphene.ObjectType):
     users = graphene.List(UserType)
-    user = graphene.Field(UserType, username=graphene.String(required=True))
+    user = graphene.Field(UserType, id=graphene.String(required=True))
 
     def resolve_users(self, info):
         return get_user_model().objects.all()
 
     @staticmethod
     def resolve_user(self, info, **kwargs):
-        username = kwargs.get('username')
-        if username is not None:
-            return get_user_model().objects.get(username=username)
+        id = kwargs.get('id')
+        if id is not None:
+            return get_user_model().objects.get(id=id)
         else:
-            raise Exception('Username is a required parameter')
+            raise Exception('id is a required parameter')
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
