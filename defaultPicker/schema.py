@@ -3,40 +3,48 @@ import graphene
 from graphene import *
 from .models import age, ethnicity, politics, religious, family, zodiacSign,tags
 from graphene_django import DjangoObjectType
+from django.db.models import F
 
 
-class ageObj(DjangoObjectType):
-    class Meta:
-        model = age
+class ageObj(graphene.ObjectType):
+    id = graphene.String()
+    value = graphene.String()
+    value_fr = graphene.String()
 
 
-class ethnicityObj(DjangoObjectType):
-    class Meta:
-        model = ethnicity
+class ethnicityObj(graphene.ObjectType):
+    id = graphene.String()
+    value = graphene.String()
+    value_fr = graphene.String()
 
-class familyObj(DjangoObjectType):
-    class Meta:
-        model = family
-
-
-class politicsObj(DjangoObjectType):
-    class Meta:
-        model = politics
+class familyObj(graphene.ObjectType):
+    id = graphene.String()
+    value = graphene.String()
+    value_fr = graphene.String()
 
 
-class religiousObj(DjangoObjectType):
-    class Meta:
-        model = religious
+class politicsObj(graphene.ObjectType):
+    id = graphene.String()
+    value = graphene.String()
+    value_fr = graphene.String()
 
 
-class tagsObj(DjangoObjectType):
-    class Meta:
-        model = tags
+class religiousObj(graphene.ObjectType):
+    id = graphene.String()
+    value = graphene.String()
+    value_fr = graphene.String()
 
 
-class zodiacSignObj(DjangoObjectType):
-    class Meta:
-        model = zodiacSign
+class tagsObj(graphene.ObjectType):
+    id = graphene.String()
+    value = graphene.String()
+    value_fr = graphene.String()
+
+
+class zodiacSignObj(graphene.ObjectType):
+    id = graphene.String()
+    value = graphene.String()
+    value_fr = graphene.String()
 
 
 class AllPickers(graphene.ObjectType):
@@ -49,23 +57,26 @@ class AllPickers(graphene.ObjectType):
     zodiacSignPicker = graphene.List(zodiacSignObj)
 
     def resolve_agePicker(self, info):
-        return age.objects.all()
+        return age.objects.values('id', value=F('age'), valueFr=F('age_fr'))
+
+    def resolve_ethnicityPicker(self, info):
+        return ethnicity.objects.values('id', value=F('ethnicity'), valueFr=F('ethnicity_fr'))
 
     def resolve_familyPicker(self, info):
-        return family.objects.all()
+        return family.objects.values('id', value=F('familyPlans'), valueFr=F('familyPlans_fr'))
 
     def resolve_polticsPicker(self, info):
-        return politics.objects.all()
+        return politics.objects.values('id', value=F('politics'), valueFr=F('politics_fr'))
 
     def resolve_religiousPicker(self, info):
-        return religious.objects.all()
+        return religious.objects.values('id', value=F('religious'), valueFr=F('religious_fr'))
 
     def resolve_tagsPicker(self, info):
-        return tags.objects.all()
+        return tags.objects.values('id', value=F('tag'), valueFr=F('tag_fr'))
 
 
     def resolve_zodiacSignPicker(self, info):
-        return zodiacSign.objects.all()
+        return zodiacSign.objects.values('id', value=F('zodiacSign'), valueFr=F('zodiacSign_fr'))
 
 
 class Query(graphene.ObjectType):
