@@ -5,8 +5,8 @@ from .models import Purchase
 
 
 class purchaseResponseObj(graphene.ObjectType):
-    purchase_id = graphene.Int()
-    current_coins = graphene.Int()
+    id = graphene.Int()
+    coins = graphene.Int()
     success = graphene.Boolean()
 
 
@@ -27,7 +27,7 @@ class purchaseCoin(graphene.Mutation):
         new_purchase = Purchase.objects.create(user=user, method=method, coins=coins, money=money)
         new_purchase.save()
 
-        return purchaseResponseObj(purchase_id=new_purchase.purchase_id, current_coins=user.coins, success=True)
+        return purchaseResponseObj(id=new_purchase.purchase_id, coins=user.coins, success=True)
 
 
 class Mutation(graphene.ObjectType):
