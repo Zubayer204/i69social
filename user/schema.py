@@ -137,7 +137,6 @@ class blockUser(graphene.Mutation):
         id = graphene.String()
         blocked_id = graphene.String()
 
-    @login_required
     def mutate(self, info, id, blocked_id):
         blckd_user = User.objects.get(id=blocked_id)
         user = User.objects.get(id=id)
