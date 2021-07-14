@@ -2,47 +2,46 @@ from django.db import models
 import graphene
 from graphene import *
 from .models import age, ethnicity, politics, religious, family, zodiacSign,tags
-from graphene_django import DjangoObjectType
 from django.db.models import F
 
 
 class ageObj(graphene.ObjectType):
-    id = graphene.String()
+    id = graphene.Int()
     value = graphene.String()
     value_fr = graphene.String()
 
 
 class ethnicityObj(graphene.ObjectType):
-    id = graphene.String()
+    id = graphene.Int()
     value = graphene.String()
     value_fr = graphene.String()
 
 class familyObj(graphene.ObjectType):
-    id = graphene.String()
+    id = graphene.Int()
     value = graphene.String()
     value_fr = graphene.String()
 
 
 class politicsObj(graphene.ObjectType):
-    id = graphene.String()
+    id = graphene.Int()
     value = graphene.String()
     value_fr = graphene.String()
 
 
 class religiousObj(graphene.ObjectType):
-    id = graphene.String()
+    id = graphene.Int()
     value = graphene.String()
     value_fr = graphene.String()
 
 
 class tagsObj(graphene.ObjectType):
-    id = graphene.String()
+    id = graphene.Int()
     value = graphene.String()
     value_fr = graphene.String()
 
 
 class zodiacSignObj(graphene.ObjectType):
-    id = graphene.String()
+    id = graphene.Int()
     value = graphene.String()
     value_fr = graphene.String()
 
@@ -65,7 +64,7 @@ class AllPickers(graphene.ObjectType):
     def resolve_familyPicker(self, info):
         return family.objects.values('id', value=F('familyPlans'), valueFr=F('familyPlans_fr'))
 
-    def resolve_polticsPicker(self, info):
+    def resolve_politicsPicker(self, info):
         return politics.objects.values('id', value=F('politics'), valueFr=F('politics_fr'))
 
     def resolve_religiousPicker(self, info):
