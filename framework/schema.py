@@ -104,13 +104,13 @@ class UpdateProfile(graphene.Mutation):
 class DeleteProfile(graphene.Mutation):
 
     class Arguments:
-        username = graphene.String()
+        id = graphene.String()
 
     Output = userResponseObj
 
-    def mutate(self, info, username):
+    def mutate(self, info, id):
         try:
-            u = User.objects.get(username = username)
+            u = User.objects.get(id = id)
             u.delete()
             raise Exception("Account Successfully Deleted")
         except User.DoesNotExist:
