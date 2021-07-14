@@ -135,11 +135,12 @@ class blockUser(graphene.Mutation):
 
     class Arguments:
         id = graphene.String()
+        blocked_id = graphene.String()
 
     @login_required
-    def mutate(self, info, id):
-        blckd_user = User.objects.get(id=id)
-        user = User.objects.get(id=info.context.user.id)
+    def mutate(self, info, id, blocked_id):
+        blckd_user = User.objects.get(id=blocked_id)
+        user = User.objects.get(id=id)
         user.blockedUsers.add(blckd_user)
         user.save()
         return blockResponseObj(id=blckd_user.id, username=blckd_user.username, success=True)
