@@ -2,7 +2,6 @@ from framework.api.API_Exception import APIException
 import graphene
 from user.models import *
 #from framework.api.API_Exception import APIException
-from graphql_jwt.decorators import login_required
 from gallery.models import Album
 from gallery.schema import AlbumObj
 from django.contrib.auth import get_user_model

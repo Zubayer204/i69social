@@ -1,12 +1,4 @@
-import os
 import time
-import json
-
-from django.http.response import JsonResponse
-from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
-
-from django.shortcuts import render
 
 from .src.RtcTokenBuilder import RtcTokenBuilder, Role_Attendee
 from .models import AgoraTokenLog
