@@ -1,5 +1,6 @@
 from django.db import models
 from googletrans import Translator
+import time
 
 translator = Translator()
 
@@ -36,6 +37,7 @@ class ethnicity(models.Model):
     def save(self, *args, **kwargs):
         if not self.ethnicity_fr:
             self.ethnicity_fr = translator.translate(self.ethnicity, dest='fr').text
+            time.sleep(0.22)
         return super().save(*args, **kwargs)
 
 class family(models.Model):
@@ -53,6 +55,7 @@ class family(models.Model):
     def save(self, *args, **kwargs):
         if not self.familyPlans_fr:
             self.familyPlans_fr = translator.translate(self.familyPlans, dest='fr').text
+            time.sleep(0.22)
         return super().save(*args, **kwargs)
 
 class politics(models.Model):
@@ -70,6 +73,7 @@ class politics(models.Model):
     def save(self, *args, **kwargs):
         if not self.politics_fr:
             self.politics_fr = translator.translate(self.politics, dest='fr').text
+            time.sleep(0.22)
         return super().save(*args, **kwargs)
 
 class religious(models.Model):
@@ -87,6 +91,7 @@ class religious(models.Model):
     def save(self, *args, **kwargs):
         if not self.religious_fr:
             self.religious_fr = translator.translate(text=self.religious, dest='fr').text
+            time.sleep(0.22)
         return super().save(*args, **kwargs)
 
 class tags(models.Model):
@@ -104,6 +109,7 @@ class tags(models.Model):
     def save(self, *args, **kwargs):
         if not self.tag_fr:
             self.tag_fr = translator.translate(self.tag, dest='fr').text
+            time.sleep(0.22)
         return super().save(*args, **kwargs)
 
 class zodiacSign(models.Model):
@@ -121,4 +127,5 @@ class zodiacSign(models.Model):
     def save(self, *args, **kwargs):
         if not self.zodiacSign_fr:
             self.zodiacSign_fr = translator.translate(self.zodiacSign, dest='fr').text
+            time.sleep(0.22)
         return super().save(*args, **kwargs)
