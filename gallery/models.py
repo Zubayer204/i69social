@@ -1,10 +1,11 @@
 from datetime import date
 from django.db import models
 from django.contrib.auth import get_user_model
+from user.models import User
 
 class Photo(models.Model):
     id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField(default=date.today)
     caption = models.CharField(max_length=200, null=True, blank=True)
     image_data = models.TextField(null=True, blank=True)
