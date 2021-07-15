@@ -245,6 +245,15 @@ class Query(
     graphene.ObjectType):
     users = graphene.List(UserType)
     user = graphene.Field(UserType, id=graphene.String(required=True))
+    search_users = graphene.List(
+        UserType,
+        interested_in=graphene.Int(required=True),
+        min_height=graphene.Int(),
+        max_height=graphene.Int(),
+        min_age=graphene.Int(),
+        max_age=graphene.Int(),
+        description="Search users based on their age, interest, height or gender"
+    )
 
     def resolve_users(self, info):
         return get_user_model().objects.all()
@@ -256,6 +265,33 @@ class Query(
             return get_user_model().objects.get(id=id)
         else:
             raise Exception('id is a required parameter')
+
+    @staticmethod
+    def resolve_search_users(self, info, **kwargs):
+        interest= kwargs.get('interested_in')
+        max_age = kwargs.get('max_age')
+        min_age = kwargs.get('min_age')
+        max_height = kwargs.get('max_height')
+        min_height = kwargs.get('min_height')
+
+        if interest is not None:
+            res = get_user_model().objects.filter(interestedIn=interest)
+        
+        if max_age is not None or min_age is not None:
+            if max_age is None:
+                max_age = 100
+            if min_age is None:
+                min_age = 0
+            res = res.filter(age__range=(min_age, max_age))
+
+        if max_height is not None or min_height is not None:
+            if max_height is None:
+                max_height = 1000
+            if min_height is None:
+                min_height = 0
+            res = res.filter(height__range=(min_height, max_height))
+        
+        return res
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
