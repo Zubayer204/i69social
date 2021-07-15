@@ -185,7 +185,7 @@ class UpdateProfile(graphene.Mutation):
         if avatar is not None:
             user.avatar = avatar
         if photos is not None:
-            print(photos, len(photos))
+            user.photo_set.all().delete()
             for photo in photos:
                 new_pic = Photo.objects.create(
                     user=user,
