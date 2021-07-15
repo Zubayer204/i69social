@@ -2,8 +2,8 @@ from framework.api.API_Exception import APIException
 import graphene
 from user.models import *
 #from framework.api.API_Exception import APIException
-from gallery.models import Album
-from gallery.schema import AlbumObj
+from gallery.models import Photo
+from gallery.schema import PhotoObj
 from django.contrib.auth import get_user_model
 from graphene_django import DjangoObjectType
 from .utils import get_gender_from_code
@@ -17,12 +17,6 @@ class Gender(graphene.ObjectType):
     
     def resolve_name(self, info):
         return get_gender_from_code(self)
-
-class photosObj(graphene.ObjectType):
-    album = graphene.Field(AlbumObj)
-
-    def resolve_album(self, info):
-        return Album.objects.values().get(id=self['album_id'])
 
 class isOnlineObj(graphene.ObjectType):
     id = graphene.String()
@@ -46,7 +40,9 @@ class OnlineObj(graphene.ObjectType):
             return self.isOnline
 
 class UploadFileObj(graphene.ObjectType):
-    fileName = graphene.String()
+    id = graphene.String()
+    success = graphene.Boolean()
+    image_data = graphene.String()
 
 class coinsResponseObj(graphene.ObjectType):
     id = graphene.String()
@@ -119,15 +115,14 @@ class UpdateProfilePic(graphene.Mutation):
 
     class Arguments:
         id = graphene.String()
+        image_data = graphene.String()
 
-    def mutate(self, info,  id=None):
+    def mutate(self, info,  id=None, image_data=None):
         user = User.objects.get(id=id)
-        avatar = info.context.FILES['imageFile']
-        profile = User.objects.get(user=user)
-        profile.avatar = avatar
-        profile.save()
+        avatar = image_data
+        user.avatar = avatar
         user.save()
-        return UploadFileObj(fileName=profile.profile_pic)
+        return UploadFileObj(id=user.id, image_data=user.avatar, success=True)
 
 class blockUser(graphene.Mutation):
     Output = blockResponseObj
@@ -147,7 +142,6 @@ class searchObj(DjangoObjectType):
     class Meta:
         model = get_user_model()
 
-
 class blockedUsers(graphene.ObjectType):
     id = graphene.String()
     username = graphene.String()
@@ -158,17 +152,12 @@ class blockedUsers(graphene.ObjectType):
     def resolve_username(self, info):
         return self['username']
 
-
 class Query(graphene.ObjectType):
 
     usersOnline = graphene.List(isOnlineObj)
-
     isOnline = graphene.Field(OnlineObj, id=graphene.String(required=True))
-
-    photos = graphene.Field(photosObj, id=graphene.String(required=True))
-
+    photos = graphene.List(PhotoObj, id=graphene.String(required=True))
     blockedUsers = graphene.List(blockedUsers)
-
     search_users = graphene.List(
         searchObj,
         interested_in=graphene.Int(required=True),
@@ -226,6 +215,12 @@ class Query(graphene.ObjectType):
         
         return res
 
+    def resolve_photos(self, info, **kwargs):
+        id = kwargs.get('id')
+        if id is None:
+            return Exception("Id is a required parameter")
+        user = get_user_model().objects.get(id=id)
+        return Photo.objects.filter(user=user)
 
 class Mutation(graphene.ObjectType):
     updateCoin = updateCoin.Field()

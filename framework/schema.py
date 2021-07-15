@@ -1,28 +1,86 @@
-import secrets
-import string
-from datetime import datetime, timedelta
-from framework import settings
 import graphene
 from django.contrib.auth import get_user_model
+from graphene.utils.resolve_only_args import resolve_only_args
 import user.schema
 import purchase.schema
 import graphql_jwt
-from .api.API_Exception import APIException
 import graphene
 from graphene_django import DjangoObjectType
-from graphql_jwt.decorators import login_required
 from user.models import User, UserSocialProfile
 from defaultPicker.models import tags
 import reports.schema
 #import purchase.schema
 import defaultPicker.schema
 import chatapp.schema
-class UserType(DjangoObjectType):
-    class Meta:
-        model = get_user_model()
+from gallery.models import Photo
+from gallery.schema import PhotoObj
+
+class TagResponse(graphene.ObjectType):
+    id = graphene.Int()
+    tag = graphene.String()
+    tag_fr = graphene.String()
+
+class blockedUsersResponse(graphene.ObjectType):
+    id = graphene.String()
+    username = graphene.String()
+
+    def resolve_id(self, info):
+        return self['id']
+    
+    def resolve_username(self, info):
+        return self['username']
+
+class UserType(graphene.ObjectType):
+    id = graphene.String()
+    username = graphene.String()
+    fullName = graphene.String()
+    email = graphene.String()
+    gender = graphene.Int()
+    about = graphene.String()
+    location = graphene.String()
+    isOnline = graphene.Boolean()
+    familyPlans = graphene.Int()
+    age = graphene.Int()
+    tags = graphene.List(TagResponse)
+    politics = graphene.Int()
+    coins = graphene.Int()
+    zodiacSign = graphene.String()
+    height = graphene.String()
+    interested_in = graphene.Int()
+    ethinicity = graphene.String()
+    religion = graphene.Int()
+    blocked_users = graphene.List(blockedUsersResponse)
+    education = graphene.String()
+    music = graphene.JSONString()
+    tvShows = graphene.JSONString()
+    sportsTeams  = graphene.JSONString()
+    movies = graphene.JSONString()
+    work = graphene.String()
+    book = graphene.JSONString()
+    avatar = graphene.String()
+    photos = graphene.List(PhotoObj)
+
+    @resolve_only_args
+    def resolve_photos(self):
+        return Photo.objects.values('id', 'image_data', 'date').filter(user=get_user_model().objects.get(id=self.id))
+    
+    @resolve_only_args
+    def resolve_tags(self):
+        user = get_user_model().objects.get(id=self.id)
+        return user.tags.all()
+    
+    @resolve_only_args
+    def resolve_blocked_users(self):
+        user = get_user_model().objects.get(id=self.id)
+        return user.blockedUsers.all()
 
 class userResponseObj(graphene.ObjectType):
     id = graphene.String()
+    photos = graphene.List(PhotoObj)
+
+    @graphene.resolve_only_args
+    def resolve_photos(self):
+        return Photo.objects.values('id', 'image_data', 'date').filter(user=get_user_model().objects.get(id=self.id))
 
 
 class CreateUser(graphene.Mutation):
@@ -53,7 +111,6 @@ class UpdateProfile(graphene.Mutation):
         gender = graphene.Int()
         about = graphene.String()
         location = graphene.String()
-        about = graphene.String()
         isOnline = graphene.Boolean()
         familyPlans = graphene.Int()
         age = graphene.Int()
@@ -72,6 +129,7 @@ class UpdateProfile(graphene.Mutation):
         work = graphene.String()
         book = graphene.JSONString()
         avatar = graphene.String()
+        photos = graphene.List(graphene.String)
 
         url = graphene.String()
         platform = graphene.Int(description="Number of social platform 1.GOOGLE 2.FACEBOOK 3.INSTAGRAM 4.SNAPCHAT 5.LINKEDIN")
@@ -80,7 +138,7 @@ class UpdateProfile(graphene.Mutation):
 
     def mutate(self, info, id, username=None, fullName=None, gender=None, email=None,height=None,familyPlans=None,
                about=None,location=None,age = None, avatar=None, isOnline=None, tag_ids=None, url=None, platform=None,
-               politics=None, zodiacSign=None, interested_in=None, ethnicity=None, religion=None, education=None):
+               politics=None, zodiacSign=None, interested_in=None, ethnicity=None, religion=None, education=None, photos=None):
         global socialObj
         user = get_user_model().objects.get(id=id)
         try:
@@ -105,8 +163,6 @@ class UpdateProfile(graphene.Mutation):
             user.location = location
         if age is not None:
             user.age = age
-        if avatar is not None:
-            user.avatar = avatar
         if isOnline is not None:
             user.isOnline = isOnline
         if tag_ids is not None:
@@ -126,6 +182,16 @@ class UpdateProfile(graphene.Mutation):
             user.religion = religion
         if education is not None:
             user.education = education
+        if avatar is not None:
+            user.avatar = avatar
+        if photos is not None:
+            print(photos, len(photos))
+            for photo in photos:
+                new_pic = Photo.objects.create(
+                    user=user,
+                    image_data=photo
+                )
+                new_pic.save()
 
         if url is not None or platform is not None:
             if profile is None:

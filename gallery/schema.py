@@ -17,15 +17,15 @@ class UserBasicObj(graphene.ObjectType):
 
 
 class PhotoObj(graphene.ObjectType):
-    caption = graphene.String()
-    image = graphene.String()
+    id = graphene.Int()
+    image_data = graphene.String()
     date = graphene.Date()
 
-    def resolve_caption(self, info):
-        return self['caption']
+    def resolve_id(self, info):
+        return self['id']
 
-    def resolve_image(self, info):
-        return self['image']
+    def resolve_image_data(self, info):
+        return self['image_data']
 
     def resolve_date(self, info):
         return self['date']
@@ -53,7 +53,7 @@ class AlbumObj(graphene.ObjectType):
     def resolve_photos(self):
         return Album.objects.values().annotate(
             caption=F('photos__caption'),
-            image=F('photos__image'),
+            image=F('photos__image_data'),
             date=F('photos__date'),
             uploader=F('photos__uploader')
         ).filter(id=self['id'])

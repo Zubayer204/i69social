@@ -5,8 +5,6 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from defaultPicker.models import tags as Tags
 
-from framework.validators import validate_file_size, processed_image_field_specs
-from imagekit.models import ProcessedImageField
 import uuid
 from .utils import FAMILY_CHOICE, AGE_RANGE, ETHINICITY_TYPE, POLITICS_CHOICE, RELIGIOUS_CHOICE
 
@@ -61,7 +59,6 @@ class User(AbstractUser):
     coins = models.PositiveIntegerField(null=False,default=0)
     zodiacSign = models.CharField(max_length=200, null=True, blank=True)
     height = models.IntegerField(null=False,default=0)
-    # interestedIn = models.ManyToManyField(Interests, blank=True,related_name='interest')
     interestedIn = models.PositiveSmallIntegerField(choices=INTEREST_CHOICES, null=True, blank=True)
     ethinicity = models.PositiveBigIntegerField(choices=ETHINICITY_TYPE, blank=True, null=True)
     religion = models.PositiveBigIntegerField(choices=RELIGIOUS_CHOICE, blank=True, null=True)
@@ -75,14 +72,7 @@ class User(AbstractUser):
     book = models.JSONField(encoder=None,null=True, blank=True)
 
 
-    avatar = ProcessedImageField(
-        blank=True,
-        verbose_name='Avatar',
-        upload_to=get_avatar_path,
-        null=True,
-        validators=[validate_file_size],
-        **processed_image_field_specs
-    )
+    avatar = models.TextField(null=True, blank=True)
 
 class UserSocialProfile(models.Model):
 
