@@ -10,7 +10,7 @@ class Photo(models.Model):
     image_data = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
     class Meta:
         verbose_name_plural = "Photos"
