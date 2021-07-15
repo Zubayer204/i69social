@@ -1,4 +1,5 @@
 from framework.api.API_Exception import APIException
+from framework.schema import UserType
 import graphene
 from user.models import *
 #from framework.api.API_Exception import APIException
@@ -138,10 +139,6 @@ class blockUser(graphene.Mutation):
         user.save()
         return blockResponseObj(id=blckd_user.id, username=blckd_user.username, success=True)
 
-class searchObj(DjangoObjectType):
-    class Meta:
-        model = get_user_model()
-
 class blockedUsers(graphene.ObjectType):
     id = graphene.String()
     username = graphene.String()
@@ -159,7 +156,7 @@ class Query(graphene.ObjectType):
     photos = graphene.List(PhotoObj, id=graphene.String(required=True))
     blockedUsers = graphene.List(blockedUsers)
     search_users = graphene.List(
-        searchObj,
+        UserType,
         interested_in=graphene.Int(required=True),
         min_height=graphene.Int(),
         max_height=graphene.Int(),
