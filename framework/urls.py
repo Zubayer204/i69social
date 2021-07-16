@@ -37,6 +37,7 @@ class GraphQLView(BaseGraphQLView):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    path('', include('social_django.urls', namespace='social')),
 ]
 admin.site.site_header = 'i69'
 admin.site.site_url = ''

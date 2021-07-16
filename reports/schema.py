@@ -4,10 +4,7 @@ import graphene
 from user.models import *
 from django.db.models import F
 from framework.api.API_Exception import APIException
-from graphql_jwt.decorators import login_required
-import graphql_social_auth
-from google.oauth2 import id_token
-from google.auth.transport import requests
+import requests
 from django.contrib.auth import get_user_model
 
 
@@ -39,24 +36,29 @@ class reportUser(graphene.Mutation):
 
 class googleAuthResponse(graphene.ObjectType):
     email = graphene.String()
-    azp = graphene.String()
-    aup = graphene.String()
-    sub = graphene.String()
     is_new = graphene.Boolean()
+    id = graphene.String()
 
-class googleAuth(graphene.Mutation):
+class SocialAuth(graphene.Mutation):
     class Arguments:
         access_token = graphene.String(required=True)
+        provider = graphene.String(required=True)
 
     Output = googleAuthResponse
 
-    def mutate(self, info, access_token):
+    def mutate(self, info, access_token, provider):
         try:
-            CLIENT_ID = "403376972935-5j0a2u4mi83qkuec1k7moqj50sl0857p.apps.googleusercontent.com"
-            idinfo = id_token.verify_oauth2_token(access_token, requests.Request(), CLIENT_ID)
+            if 'google' in provider.lower():
+                print(access_token)
+                idinfo = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={access_token}")
+                idinfo = idinfo.json()
+                print(idinfo)
+                if idinfo.get('error') == "invalid_token":
+                    return Exception("Invalid Token")
 
             if GoogleAuth.objects.get(email=idinfo['email']):
                 is_new = False
+                user = get_user_model().objects.get(email=idinfo['email'])
 
             else:
                 user = get_user_model().objects.create(
@@ -74,16 +76,15 @@ class googleAuth(graphene.Mutation):
                 g.save()
 
 
-            return googleAuthResponse(email=idinfo['email'], azp=idinfo['azp'], aup=idinfo['aup'], sub=idinfo['sub'], is_new=is_new)
+            return googleAuthResponse(email=idinfo['email'], is_new=is_new, id=user.id)
         except ValueError:
             Exception("Invalid Token")
     
 
 
 class Mutation(graphene.ObjectType):
-    social_auth = graphql_social_auth.SocialAuth.Field()
+    social_auth = SocialAuth.Field()
     reportUser = reportUser.Field()
-    google_auth = googleAuth.Field()
 
 
 # class googleAuth(graphene.ObjectType):
