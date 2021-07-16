@@ -13,7 +13,7 @@ from import_export.admin import ImportExportModelAdmin, ExportActionMixin
 
 @admin.register(User)
 class UserAdmin(ImportExportModelAdmin, ExportActionMixin,admin.ModelAdmin):
-    readonly_fields = ('id',)
+    readonly_fields = ('id','blockedUsers',)
 
 @admin.register(UserSocialProfile)
 class UserSocialProfileAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):

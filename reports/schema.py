@@ -30,6 +30,9 @@ class reportUser(graphene.Mutation):
                 reporter=reporter,
                 reportee=reportee,
             )
+        user = get_user_model().objects.get(id=reporter)
+        blckd_user = get_user_model().objects.get(id=reportee)
+        user.blockedUsers.add(blckd_user)
         report.save()
         print(Reported_Users.id)
         return reportResponseObj(id=report.id)
