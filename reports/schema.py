@@ -52,18 +52,17 @@ class SocialAuth(graphene.Mutation):
                 print(access_token)
                 idinfo = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={access_token}")
                 idinfo = idinfo.json()
-                print(idinfo)
                 if idinfo.get('error') == "invalid_token":
                     return Exception("Invalid Token")
-
-            if GoogleAuth.objects.get(email=idinfo['email']):
+            try:
+                GoogleAuth.objects.get(email=idinfo['email'])
                 is_new = False
                 user = get_user_model().objects.get(email=idinfo['email'])
+            except:
 
-            else:
                 user = get_user_model().objects.create(
                     password='',
-                    name=idinfo['name'],
+                    fullName=idinfo['name'],
                     email=idinfo['email'],
                     username=idinfo['email'].split('@')[0]
                 )
