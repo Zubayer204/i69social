@@ -13,7 +13,9 @@ from import_export.admin import ImportExportModelAdmin, ExportActionMixin
 
 @admin.register(User)
 class UserAdmin(ImportExportModelAdmin, ExportActionMixin,admin.ModelAdmin):
+    list_display = ['username', 'fullName', 'email', 'is_staff', 'is_superuser']
     readonly_fields = ('id','blockedUsers',)
+    search_fields = ['id', 'username', 'fullName', 'email']
 
 @admin.register(UserSocialProfile)
 class UserSocialProfileAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
