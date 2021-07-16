@@ -86,6 +86,7 @@ class UserType(graphene.ObjectType):
 
 class userResponseObj(graphene.ObjectType):
     id = graphene.String()
+    username = graphene.String()
     photos = graphene.List(PhotoObj)
     interested_in = graphene.List(InResponse)
 
