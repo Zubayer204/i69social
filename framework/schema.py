@@ -5,9 +5,8 @@ import user.schema
 import purchase.schema
 import graphql_jwt
 import graphene
-from graphene_django import DjangoObjectType
 from user.models import User, UserSocialProfile
-from defaultPicker.models import tags
+from defaultPicker.models import tags, interestedIn
 import reports.schema
 #import purchase.schema
 import defaultPicker.schema
@@ -30,6 +29,11 @@ class blockedUsersResponse(graphene.ObjectType):
     def resolve_username(self, info):
         return self['username']
 
+class InResponse(graphene.ObjectType):
+    id = graphene.Int()
+    interest = graphene.String()
+    interest_fr = graphene.String()
+
 class UserType(graphene.ObjectType):
     id = graphene.String()
     username = graphene.String()
@@ -46,7 +50,7 @@ class UserType(graphene.ObjectType):
     coins = graphene.Int()
     zodiacSign = graphene.String()
     height = graphene.String()
-    interested_in = graphene.Int()
+    interested_in = graphene.List(InResponse)
     ethinicity = graphene.String()
     religion = graphene.Int()
     blocked_users = graphene.List(blockedUsersResponse)
@@ -68,6 +72,11 @@ class UserType(graphene.ObjectType):
     def resolve_tags(self):
         user = get_user_model().objects.get(id=self.id)
         return user.tags.all()
+
+    @resolve_only_args
+    def resolve_interested_in(self):
+        user = get_user_model().objects.get(id=self.id)
+        return user.interestedIn.all()
     
     @resolve_only_args
     def resolve_blocked_users(self):
@@ -77,10 +86,15 @@ class UserType(graphene.ObjectType):
 class userResponseObj(graphene.ObjectType):
     id = graphene.String()
     photos = graphene.List(PhotoObj)
+    interested_in = graphene.List(InResponse)
 
     @graphene.resolve_only_args
     def resolve_photos(self):
         return Photo.objects.values('id', 'image_data', 'date').filter(user=get_user_model().objects.get(id=self.id))
+    
+    @graphene.resolve_only_args
+    def resolve_interested_in(self):
+        return get_user_model().objects.get(id=self.id).interestedIn.all()
 
 
 class CreateUser(graphene.Mutation):
@@ -118,7 +132,7 @@ class UpdateProfile(graphene.Mutation):
         politics = graphene.Int()
         zodiacSign = graphene.String()
         height = graphene.String()
-        interested_in = graphene.Int()
+        interested_in = graphene.List(graphene.Int)
         ethinicity = graphene.String()
         religion = graphene.Int()
         education = graphene.String()
@@ -175,7 +189,11 @@ class UpdateProfile(graphene.Mutation):
         if zodiacSign is not None:
             user.zodiacSign = zodiacSign
         if  interested_in is not None:
-            user.interested_in = interested_in
+            user.interestedIn.clear()
+            for interest in interested_in:
+                i = interestedIn.objects.get(pk=interest)
+                if i is not None:
+                    user.interestedIn.add(i)
         if ethnicity is not None:
             user.ethnicity = ethnicity
         if religion is not None:
@@ -275,7 +293,7 @@ class Query(
         min_height = kwargs.get('min_height')
 
         if interest is not None:
-            res = get_user_model().objects.filter(interestedIn=interest)
+            res = get_user_model().objects.filter(interestedIn__id=interest)
         
         if max_age is not None or min_age is not None:
             if max_age is None:

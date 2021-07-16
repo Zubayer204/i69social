@@ -1,7 +1,7 @@
 from django.db import models
 import graphene
 from graphene import *
-from .models import age, ethnicity, politics, religious, family, zodiacSign,tags
+from .models import age, ethnicity, politics, religious, family, zodiacSign,tags, interestedIn
 from django.db.models import F
 
 
@@ -45,6 +45,11 @@ class zodiacSignObj(graphene.ObjectType):
     value = graphene.String()
     value_fr = graphene.String()
 
+class interestedInObj(graphene.ObjectType):
+    id = graphene.Int()
+    value = graphene.String()
+    value_fr = graphene.String()
+
 
 class AllPickers(graphene.ObjectType):
     agePicker = graphene.List(ageObj)
@@ -54,6 +59,7 @@ class AllPickers(graphene.ObjectType):
     religiousPicker = graphene.List(religiousObj)
     tagsPicker = graphene.List(tagsObj)
     zodiacSignPicker = graphene.List(zodiacSignObj)
+    interestedInPicker = graphene.List(interestedInObj)
 
     def resolve_agePicker(self, info):
         return age.objects.values('id', value=F('age'), value_fr=F('age'))
@@ -76,6 +82,9 @@ class AllPickers(graphene.ObjectType):
 
     def resolve_zodiacSignPicker(self, info):
         return zodiacSign.objects.values('id', value=F('zodiacSign'), value_fr=F('zodiacSign_fr'))
+    
+    def resolve_interestedInPicker(self, info):
+        return interestedIn.objects.values('id', value=F('interest'), value_fr=F('interest_fr'))
 
 
 class Query(graphene.ObjectType):
