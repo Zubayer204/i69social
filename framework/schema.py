@@ -226,7 +226,7 @@ class UpdateProfile(graphene.Mutation):
 
         
         user.save()
-        return userResponseObj(id=user.id)
+        return userResponseObj(id=user.id, username=user.username)
 
 class DeleteProfile(graphene.Mutation):
 
