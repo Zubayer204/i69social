@@ -16,6 +16,7 @@ class UserAdmin(ImportExportModelAdmin, ExportActionMixin,admin.ModelAdmin):
     list_display = ['username', 'fullName', 'email', 'is_staff', 'is_superuser']
     readonly_fields = ('id','blockedUsers',)
     search_fields = ['id', 'username', 'fullName', 'email']
+    exclude = ('password',)
 
 @admin.register(UserSocialProfile)
 class UserSocialProfileAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):

@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-from defaultPicker.models import tags as Tags
+from defaultPicker.models import interestedIn as InterestedIn, tags as Tags
 
 import uuid
 from .utils import FAMILY_CHOICE, AGE_RANGE, ETHINICITY_TYPE, POLITICS_CHOICE, RELIGIOUS_CHOICE
@@ -57,9 +57,10 @@ class User(AbstractUser):
     tags = models.ManyToManyField(Tags, related_name='profile_tags', blank=True)
     politics = models.PositiveBigIntegerField(choices=POLITICS_CHOICE, blank=True, null=True)
     coins = models.PositiveIntegerField(null=False,default=0)
-    zodiacSign = models.CharField(max_length=200, null=True, blank=True)
+    zodiacSign = models.CharField(max_length=200, blank=True, null=True)
     height = models.IntegerField(null=False,default=0)
-    interestedIn = models.PositiveSmallIntegerField(choices=INTEREST_CHOICES, null=True, blank=True)
+    # interestedIn = models.PositiveSmallIntegerField(choices=INTEREST_CHOICES, null=True, blank=True)
+    interestedIn = models.ManyToManyField(InterestedIn, blank=True)
     ethinicity = models.PositiveBigIntegerField(choices=ETHINICITY_TYPE, blank=True, null=True)
     religion = models.PositiveBigIntegerField(choices=RELIGIOUS_CHOICE, blank=True, null=True)
     blockedUsers =  models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True)

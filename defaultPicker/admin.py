@@ -1,13 +1,5 @@
 from django.contrib import admin
-from django.contrib.admin.options import ModelAdmin
-
-# Register your models here.
-
 from .models import *
-
-from easy_select2 import select2_modelform
-
-from import_export import resources
 from import_export.admin import ImportExportModelAdmin, ExportActionMixin
 
 
@@ -17,7 +9,8 @@ class AgeAdmin(ImportExportModelAdmin, ExportActionMixin,admin.ModelAdmin):
 
 @admin.register(tags)
 class TagAdmin(ImportExportModelAdmin, ExportActionMixin,admin.ModelAdmin):
-    pass
+    list_display = ['id', 'tag', 'tag_fr']
+    search_fields = ['id', 'tag', 'tag_fr']
 
 @admin.register(ethnicity)
 class EthnicityAdmin(ImportExportModelAdmin, ExportActionMixin,admin.ModelAdmin):
@@ -39,3 +32,7 @@ class zodiacSignAdmin(ImportExportModelAdmin, ExportActionMixin,admin.ModelAdmin
 @admin.register(family)
 class FamilyAdmin(ImportExportModelAdmin, ExportActionMixin,admin.ModelAdmin):
     pass
+
+@admin.register(interestedIn)
+class InterestedInAdmin(ImportExportModelAdmin, ExportActionMixin,admin.ModelAdmin):
+    list_display = ['id', 'interest', 'interest_fr']

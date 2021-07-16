@@ -124,3 +124,21 @@ class zodiacSign(models.Model):
             self.zodiacSign_fr = translator.translate(self.zodiacSign, dest='fr').text
             time.sleep(0.22)
         return super().save(*args, **kwargs)
+        
+class interestedIn(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    interest = models.CharField(max_length=265)
+    interest_fr = models.CharField(max_length=265)
+
+    class Meta:
+        verbose_name_plural = "interestedIn"
+        verbose_name = "interestedIn"
+    
+    def __str__(self):
+        return str(self.id) + " - " + str(self.interest) + " - " + str(self.interest_fr)
+    
+    def save(self, *args, **kwargs):
+        if not self.interest_fr:
+            self.interest_fr = translator.translate(self.interest, dest='fr').text.upper()
+            time.sleep(0.22)
+        return super().save(*args, **kwargs)
