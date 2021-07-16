@@ -39,6 +39,7 @@ class UserType(graphene.ObjectType):
     username = graphene.String()
     fullName = graphene.String()
     email = graphene.String()
+    username = graphene.String()
     gender = graphene.Int()
     about = graphene.String()
     location = graphene.String()
